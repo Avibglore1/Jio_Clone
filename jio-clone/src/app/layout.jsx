@@ -22,6 +22,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <header>
+          <div className="text-bold ">I am header</div>
+        </header>  
         {children}
       </body>
     </html>
