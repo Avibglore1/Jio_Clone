@@ -3,17 +3,29 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
+  console.log("Received signup request:", req.body); // ✅ Log request data
+
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
+    console.log("❌ Missing fields");
     return res.status(400).json({ message: "All fields are required" });
   }
 
   const userExists = await User.findOne({ email });
-  if (userExists) return res.status(400).json({ message: "User already exists" });
+  if (userExists) {
+    console.log("❌ User already exists");
+    return res.status(400).json({ message: "User already exists, Redirecting to login", redirect: "/login"  });
+  }
 
-  const newUser = new User({ username, email, password });
+  console.log("✅ User does not exist. Proceeding with hashing...");
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  console.log("✅ Hashed password created");
+  const newUser = new User({ username, email, password: hashedPassword });
+
   await newUser.save();
+  console.log("✅ User saved to database");
 
   res.status(201).json({ message: "User registered successfully" });
 };

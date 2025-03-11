@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import HeroBanner from "@/components/HeroBanner";
 import MovieList from "@/components/MovieList";
 import { fetchMovies } from "./../lib/api";
@@ -8,7 +7,6 @@ export default async function Home() {
 
   return (
     <div className="bg-black text-white">
-      <Navbar />
       <HeroBanner movie={movies[0]} />
       <MovieList category="popular" title="Trending Now" />
       <MovieList category="top_rated" title="Top Rated" />
