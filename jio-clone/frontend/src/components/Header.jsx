@@ -1,13 +1,13 @@
 "use client"
 import Image from "./../../public/file.svg"
 import Link from "next/link"
-import { useState } from "react"
+import { useRouter } from "next/navigation";
 import { Search, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import AuthModal from "@/app/profile/page"
+
 
 export default function Header() {
-  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const router = useRouter();
   return (
     <>
     <header className="bg-black/95 px-4 py-3 flex items-center justify-between">
@@ -57,12 +57,15 @@ export default function Header() {
           </Button>
 
           {/* User Profile / Login Button */}
-          <button onClick={() => setAuthModalOpen(true)} className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center">
+          <button
+          onClick={() => router.push("/login")} // Redirects to login page
+          className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center"
+          >
             <img src={Image} alt="User profile" className="object-cover" />
           </button>
       </div>
     </header>
-    <AuthModal open={authModalOpen} setOpen={setAuthModalOpen} />
+    
     </>
   )
 }

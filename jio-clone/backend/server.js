@@ -9,8 +9,15 @@ dotenv.config();
 const app = express();
 
 // Middleware
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Frontend URL
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true, // Allow cookies, authorization headers, etc.
+  })
+);
 app.use(express.json());
-app.use(cors());
+
 
 // Connect to MongoDB
 connectDB();
