@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { sendRegisterMail } from "../utilities/sendMail.js";
+import { sendRegisterMail, welcomeMail } from "../utilities/sendMail.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -79,6 +79,11 @@ export const verify = async (req, res) => {
     password, // Ensure password is hashed before storing
   });
   console.log('user registered succesfully');
+  try {
+    await welcomeMail(email, "Jio Cinema", { username });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to send welcome email" });
+  }
   res.json({ message: "User registered successfully!" });
 };
 

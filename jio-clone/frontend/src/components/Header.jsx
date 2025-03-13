@@ -1,5 +1,5 @@
 "use client"
-import Image from "./../../public/file.svg"
+
 import Link from "next/link"
 import { useRouter } from "next/navigation";
 import { Search, ChevronDown } from "lucide-react"
@@ -14,8 +14,8 @@ export default function Header() {
       <div className="flex items-center gap-6">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-pink-600 flex items-center justify-center mr-2">
-            <span className="text-white font-bold text-sm">JC</span>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center mr-2">
+            <img src="/images/jiocinemalogo.png" alt=""  />
           </div>
           <span className="text-white font-semibold text-xl">JioCinema</span>
         </Link>
@@ -59,9 +59,9 @@ export default function Header() {
           {/* User Profile / Login Button */}
           <button
           onClick={() => router.push("/login")} // Redirects to login page
-          className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center"
+          className="w-8 h-8 rounded-full flex items-center justify-center"
           >
-            <img src={Image} alt="User profile" className="object-cover" />
+            <img src="/images/user.jpg" alt="User" className="w-8 h-8  rounded-full" />
           </button>
       </div>
     </header>
