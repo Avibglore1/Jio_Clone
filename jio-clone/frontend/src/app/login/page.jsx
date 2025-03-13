@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
 dotenv.config();
+
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -16,7 +18,7 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, form, { withCredentials: true });
-      console.log('frontend response received');
+      console.log("frontend response received");
       localStorage.setItem("token", res.data.token);
       router.push("/dashboard");
     } catch (err) {
@@ -29,7 +31,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-2.5 bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen p-4 bg-gray-100">
       <Card className="w-full max-w-sm shadow-lg">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-semibold">Login</CardTitle>
@@ -57,14 +59,21 @@ export default function Login() {
           </form>
         </CardContent>
         <CardFooter className="text-center text-sm text-gray-500 flex flex-col gap-2">
-          <a href="/forgot-password" className="mr-auto text-blue-500 hover:underline">
+          {/* Use onClick to navigate to /forgot */}
+          <button
+            onClick={() => router.push("/forgot")}
+            className="mr-auto text-blue-500 hover:underline"
+          >
             Forgot Password?
-          </a>
+          </button>
           <p className="ml-auto">
             Don't have an account?{" "}
-            <a href="/signup" className=" text-blue-500 hover:underline">
+            <button
+              onClick={() => router.push("/signup")}
+              className="text-blue-500 hover:underline"
+            >
               Sign Up
-            </a>
+            </button>
           </p>
         </CardFooter>
       </Card>

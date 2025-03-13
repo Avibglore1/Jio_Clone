@@ -57,7 +57,7 @@ const VerifyUser = () => {
   };
 
   return (
-    <div className="pt-16 flex justify-center min-h-[calc(100vh-64px)]">
+    <div className="flex justify-center items-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
         <h2 className="text-2xl font-semibold text-center mb-6">Verify OTP</h2>
 

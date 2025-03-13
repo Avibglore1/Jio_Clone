@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { sendRegisterMail, welcomeMail } from "../utilities/sendMail.js";
+import { sendRegisterMail, welcomeMail, sendForgotMail } from "../utilities/sendMail.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -116,4 +116,72 @@ export const login = async (req, res) => {
 export const logout = (req, res) => {
   res.cookie("authToken", "", { expires: new Date(0) });
   res.status(200).json({ message: "Logged out successfully" });
+};
+
+export const forgotPassword = async (req, res) => {
+  try {
+    console.log('Started forgot password process');
+
+    const { email } = req.body;
+
+    // Check if the user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.log('User not found');
+      return res.status(404).json({ message: "No user with this email" });
+    }
+
+    // Generate a reset token
+    const token = jwt.sign({ email }, process.env.Forgot_Secret, { expiresIn: "5m" });
+    console.log('Token generated, preparing to send email');
+
+    // Send reset email
+    await sendForgotMail("Password Reset", { email, token });
+    console.log('Email sent successfully');
+
+    // Set token expiration time in user document
+    user.resetPasswordExpire = Date.now() + 5 * 60 * 1000;
+    await user.save();
+
+    res.json({ message: "Reset password link sent to your email" });
+
+  } catch (error) {
+    console.error('Error in forgotPassword:', error);
+    res.status(500).json({ message: "Something went wrong, please try again later" });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { token, password } = req.body; // Get token and password from body
+
+  if (!token || !password) {
+    console.log('token and password required');
+    return res.status(400).json({ message: "Token and password are required" });
+  }
+
+  try {
+    const decodedData = jwt.verify(token, process.env.Forgot_Secret);
+
+    const user = await User.findOne({ email: decodedData.email });
+
+    if (!user) {
+      return res.status(404).json({ message: "No user with this email" });
+    }
+
+    if (!user.resetPasswordExpire || user.resetPasswordExpire < Date.now()) {
+      return res.status(400).json({ message: "Token Expired" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    user.password = hashedPassword;
+    user.resetPasswordExpire = null;
+
+    await user.save();
+
+    res.json({ message: "Password Reset Successfully!" });
+  } catch (error) {
+    console.error("Token Verification Error:", error);
+    res.status(400).json({ message: "Invalid or expired token" });
+  }
 };
