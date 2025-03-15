@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import HeroHome from "./../components/Banner/HeroHome"
+import HeroMovies from "./../../components/Banner/HeroMovies"
 import MovieList from "@/components/MovieList";
-import HomeBadge from "@/components/Badge/HomeBadge";
+import MovieBadge from "./../../components/Badge/MovieBadge"
 import { ArrowUp } from "lucide-react";
 
 export default function Home() {
@@ -28,22 +28,35 @@ export default function Home() {
     });
   };
 
+  // Define genre IDs for each category
+  // Comedy: 35, Horror: 27, Romance: 10749, Action: 28
+  const genreIds = {
+    comedy: 35,
+    horror: 27,
+    romance: 10749,
+    action: 28
+  };
+
   return (
     <div className="bg-black text-white relative">
       <div id="top-of-page"></div>
-      <HomeBadge />
-      <HeroHome />
+      <MovieBadge />
+      <HeroMovies />
       
-      <div id="trending-section" className="scroll-mt-16">
-        <MovieList category="popular" title="Trending Now" />
+      <div id="comedy-section" className="scroll-mt-16">
+        <MovieList category="genre" genreId={genreIds.comedy} title="Top Comedy Movies" />
       </div>
       
-      <div id="top-rated-section" className="scroll-mt-16">
-        <MovieList category="top_rated" title="Top Rated" />
+      <div id="horror-section" className="scroll-mt-16">
+        <MovieList category="genre" genreId={genreIds.horror} title="Top Horror Movies" />
       </div>
       
-      <div id="upcoming-section" className="scroll-mt-16">
-        <MovieList category="upcoming" title="Upcoming Movies" />
+      <div id="romance-section" className="scroll-mt-16">
+        <MovieList category="genre" genreId={genreIds.romance} title="Top Romance Movies" />
+      </div>
+
+      <div id="action-section" className="scroll-mt-16">
+        <MovieList category="genre" genreId={genreIds.action} title="Top Action Movies" />
       </div>
       
       {showBackToTop && (
