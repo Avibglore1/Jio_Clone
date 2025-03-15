@@ -10,7 +10,7 @@ export default function Header() {
   const router = useRouter();
   return (
     <>
-    <header className="bg-black/95 px-4 py-3 flex items-center justify-between">
+    <header className="bg-black px-4 py-3 flex items-center justify-between">
       <div className="flex items-center gap-6">
         {/* Logo */}
         <Link href="/" className="flex items-center">

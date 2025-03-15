@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { fetchMovies } from "../lib/api";
 
-const MovieList = ({ category, title }) => {
+ const MovieList = ({ category, title }) => {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
