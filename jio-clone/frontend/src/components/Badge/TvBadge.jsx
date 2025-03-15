@@ -2,7 +2,7 @@
 import React from 'react';
 import { Badge } from "@/components/ui/badge";
 
-function MovieBadge() {
+function TvBadge() {
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
@@ -14,30 +14,30 @@ function MovieBadge() {
     <div className='bg-black text-white px-4 py-3 flex gap-3'>
       <Badge 
         className="cursor-pointer hover:bg-gray-700" 
-        onClick={() => scrollToSection('comedy-section')}
+        onClick={() => scrollToSection('comedyTv-section')}
       >
-        Top Comedy Movies
+        Comedy
       </Badge>
       <Badge 
         className="cursor-pointer hover:bg-gray-700" 
-        onClick={() => scrollToSection('horror-section')}
+        onClick={() => scrollToSection('crimeTv-section')}
       >
-        Top Horror Movies
+        Crime
       </Badge>
       <Badge 
         className="cursor-pointer hover:bg-gray-700" 
-        onClick={() => scrollToSection('romance-section')}
+        onClick={() => scrollToSection('dramaTv-section')}
       >
-        Top Romance Movies
+        Drama
       </Badge>
       <Badge 
         className="cursor-pointer hover:bg-gray-700" 
-        onClick={() => scrollToSection('action-section')}
+        onClick={() => scrollToSection('actionTv-section')}
       >
-        Top Action Movies
+        Action
       </Badge>
     </div>
   );
 }
 
-export default MovieBadge;
+export default TvBadge;

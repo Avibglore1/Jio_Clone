@@ -1,53 +1,109 @@
-const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-const BASE_URL = "https://api.themoviedb.org/3";
-
-// Existing fetchMovies function for trending, upcoming, etc.
+// Movie API Functions
 export const fetchMovies = async (category) => {
-  let endpoint = "";
-  
-  switch (category) {
-    case "trending":
-      endpoint = `/trending/movie/week?api_key=${API_KEY}`;
-      break;
-    case "upcoming":
-      endpoint = `/movie/upcoming?api_key=${API_KEY}`;
-      break;
-    case "top_rated":
-      endpoint = `/movie/top_rated?api_key=${API_KEY}`;
-      break;
-    // Add more categories as needed
-    default:
-      endpoint = `/trending/movie/week?api_key=${API_KEY}`;
-  }
-
   try {
-    const response = await fetch(`${BASE_URL}${endpoint}`);
-    if (!response.ok) {
-      throw new Error(`Error fetching movies: ${response.status}`);
+    let endpoint;
+    switch (category) {
+      case "trending":
+        endpoint = `/trending/movie/week`;
+        break;
+      case "popular":
+        endpoint = `/movie/popular`;
+        break;
+      case "upcoming":
+        endpoint = `/movie/upcoming`;
+        break;
+      case "top_rated":
+        endpoint = `/movie/top_rated`;
+        break;
+      default:
+        endpoint = `/movie/popular`;
     }
-    const data = await response.json();
-    return data.results;
+
+    const res = await fetch(
+      `https://api.themoviedb.org/3${endpoint}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&language=en-US`
+    );
+    
+    if (!res.ok) {
+      throw new Error(`API Error: ${res.status}`);
+    }
+    
+    const data = await res.json();
+    return data.results || [];
   } catch (error) {
     console.error("Error fetching movies:", error);
     return [];
   }
 };
 
-// New function to fetch movies by genre with improved error handling
 export const fetchMoviesByGenre = async (genreId) => {
   try {
-    // Get more results to ensure we have enough valid movies with posters
-    const endpoint = `/discover/movie?api_key=${API_KEY}&with_genres=${genreId}&sort_by=popularity.desc&page=1&vote_count.gte=100`;
-    const response = await fetch(`${BASE_URL}${endpoint}`);
+    const res = await fetch(
+      `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&with_genres=${genreId}&language=en-US&sort_by=popularity.desc`
+    );
     
-    if (!response.ok) {
-      throw new Error(`Error fetching movies by genre: ${response.status}`);
+    if (!res.ok) {
+      throw new Error(`API Error: ${res.status}`);
     }
     
-    const data = await response.json();
-    return data.results;
+    const data = await res.json();
+    return data.results || [];
   } catch (error) {
     console.error("Error fetching movies by genre:", error);
+    return [];
+  }
+};
+
+// TV Show API Functions
+export const fetchTvShows = async (category) => {
+  try {
+    let endpoint;
+    switch (category) {
+      case "trending":
+        endpoint = `/trending/tv/week`;
+        break;
+      case "popular":
+        endpoint = `/tv/popular`;
+        break;
+      case "top_rated":
+        endpoint = `/tv/top_rated`;
+        break;
+      case "on_the_air":
+        endpoint = `/tv/on_the_air`;
+        break;
+      default:
+        endpoint = `/tv/popular`;
+    }
+
+    const res = await fetch(
+      `https://api.themoviedb.org/3${endpoint}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&language=en-US`
+    );
+    
+    if (!res.ok) {
+      throw new Error(`API Error: ${res.status}`);
+    }
+    
+    const data = await res.json();
+    return data.results || [];
+  } catch (error) {
+    console.error("Error fetching TV shows:", error);
+    return [];
+  }
+};
+
+export const fetchTvShowsByGenre = async (genreId) => {
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/discover/tv?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&with_genres=${genreId}&language=en-US&sort_by=popularity.desc`
+    );
+    
+    if (!res.ok) {
+      throw new Error(`API Error: ${res.status}`);
+    }
+    
+    const data = await res.json();
+    return data.results || [];
+  } catch (error) {
+    console.error("Error fetching TV shows by genre:", error);
     return [];
   }
 };

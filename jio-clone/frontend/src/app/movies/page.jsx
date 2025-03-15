@@ -5,7 +5,7 @@ import MovieList from "@/components/MovieList";
 import MovieBadge from "./../../components/Badge/MovieBadge"
 import { ArrowUp } from "lucide-react";
 
-export default function Home() {
+export default function MoviesHome() {
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
