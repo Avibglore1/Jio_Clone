@@ -113,9 +113,39 @@ export const login = async (req, res) => {
   res.status(200).json({ message: "Login successful", token });
 };
 
+export const protectRouteMiddleWare = async function (req, res, next) {
+  try {
+      let jwttoken = req.cookies.jwt;
+      if (!jwttoken) throw new Error("UnAuthorized!");
+
+      let decryptedToken = await promisifiedJWTVerify(jwttoken, Jwt_Sec);
+
+      if (decryptedToken) {
+          let userId = decryptedToken.id;
+          // adding the userId to the req object
+          req.userId = userId;
+          console.log("authenticated");
+          next();
+      }
+  } catch (err) {
+      res.status(500).json({
+          message: err.message,
+          status: "failure",
+      });
+  }
+};
+
 export const logout = (req, res) => {
-  res.cookie("authToken", "", { expires: new Date(0) });
-  res.status(200).json({ message: "Logged out successfully" });
+  res.cookie("authToken", "", {
+    expires: new Date(0),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+
+  req.session?.destroy?.(); // Destroy session if applicable
+
+  res.status(200).json({ success: true, message: "Logged out successfully" });
 };
 
 export const forgotPassword = async (req, res) => {
