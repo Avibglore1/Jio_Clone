@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import HeroMovies from "./../../components/Banner/HeroMovies"
+import HeroMovies from "../../components/Banner/HeroMovies"
 import MovieList from "@/components/MovieList";
-import MovieBadge from "./../../components/Badge/MovieBadge"
+import MovieBadge from "../../components/Badge/MovieBadge"
 import { ArrowUp } from "lucide-react";
 
 export default function MoviesHome() {

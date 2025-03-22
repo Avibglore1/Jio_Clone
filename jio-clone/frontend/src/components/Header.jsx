@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Search, ChevronDown } from "lucide-react";
@@ -18,20 +18,22 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <div className="w-8 h-8 rounded-full flex items-center justify-center mr-2">
-            <img src="/images/jiocinemalogo.png" alt="JioCinema Logo" />
+            <Image src="/jiocinemalogo.png" alt="JioCinema Logo" height={30} width={30} />
           </div>
           <span className="text-white font-semibold text-xl">JioCinema</span>
         </Link>
 
         {/* Premium Button */}
-        <Button
-          variant="outline"
-          size="lg"
-          className="h-7 px-3 rounded-full border-yellow-500 bg-transparent text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
-        >
-          <span className="text-sm">✦</span> Go Premium
-        </Button>
-
+        <Link href="/subscription">
+          <Button
+            variant="outline"
+            size="lg"
+            className="h-7 px-3 rounded-full border-yellow-500 bg-transparent text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
+          >
+            <span className="text-sm">✦</span> Go Premium
+          </Button>
+        </Link>
+        
         {/* Navigation Links */}
         <nav className="hidden md:flex items-center gap-6">
           {[
@@ -73,7 +75,7 @@ export default function Header() {
           onClick={() => router.push("/login")}
           className="w-8 h-8 rounded-full flex items-center justify-center"
         >
-          <img src="/images/user.jpg" alt="User" className="w-8 h-8 rounded-full" />
+          <Image src="/user.jpg" alt="User" className="w-8 h-8 rounded-full"  height={20} width={20}/>
         </button>
       </div>
     </header>
