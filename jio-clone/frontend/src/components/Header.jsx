@@ -1,16 +1,26 @@
 "use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { Search, ChevronDown, ExternalLink, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
-import { Search, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function Header() {
-  const router = useRouter();
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   // Function to determine if a link is active
   const isActive = (path) => pathname === path;
+
+  // Handle login button click
+  const handleLogin = () => {
+    setOpen(false); // Close the sheet
+    router.push("/login"); // Navigate to login
+  };
 
   return (
     <header className="bg-black px-4 py-3 flex items-center justify-between">
@@ -33,7 +43,7 @@ export default function Header() {
             <span className="text-sm">✦</span> Go Premium
           </Button>
         </Link>
-        
+
         {/* Navigation Links */}
         <nav className="hidden md:flex items-center gap-6">
           {[
@@ -70,13 +80,54 @@ export default function Header() {
           />
         </div>
 
-        {/* User Profile / Login */}
-        <button
-          onClick={() => router.push("/login")}
-          className="w-8 h-8 rounded-full flex items-center justify-center"
-        >
-          <Image src="/user.jpg" alt="User" className="w-8 h-8 rounded-full"  height={20} width={20}/>
-        </button>
+        {/* User Profile with Sheet */}
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <button className="w-8 h-8 rounded-full flex items-center justify-center">
+              <Image src="/user.jpg" alt="User" className="w-8 h-8 rounded-full" height={20} width={20} />
+            </button>
+          </SheetTrigger>
+          <SheetContent side="right" className="bg-black text-white w-80">
+            <SheetTitle className="sr-only">User Profile</SheetTitle> {/* Hidden for accessibility */}
+            
+            {/* Profile Section */}
+            <div className="flex flex-col items-center p-5 border-b border-gray-700">
+              <Image src="/user.jpg" alt="User" className="w-20 h-20 rounded-full" height={80} width={80} />
+              <h3 className="mt-3 text-xl font-semibold">Guest</h3>
+              <Button className="mt-3 bg-pink-600 text-white px-6 rounded-full hover:bg-pink-500"
+                onClick={handleLogin}>
+                Login
+              </Button>
+            </div>
+
+            {/* Menu Items */}
+            <div className="mt-4 text-gray-300">
+              <ul className="space-y-4">
+                {[
+                { name: "Subscribe Now", path: "/subscription"},  
+                { name: "Home", path: "/" },
+                { name: "Movies", path: "/movies" },
+                { name: "Tv Shows", path: "/tv-shows" },
+                { name: "Watchlist", path: "/watchlist" },
+                { name: "Jio+", path: "/jio-plus" },
+              ].map((item) => (
+                <li key={item.path}>
+                  <Link 
+                    href={item.path}
+                    className="flex justify-between items-center px-4 py-2 hover:bg-gray-800 cursor-pointer w-full"
+                    onClick={() => setOpen(false)} // Close the sheet when clicked
+                  >
+                    {item.name} <ExternalLink className="w-4 h-4" />
+                  </Link>
+                </li>
+                ))}
+                <li className="flex justify-between items-center px-4 py-2 hover:bg-gray-800 cursor-pointer">
+                  Help and Legal <ChevronDown className="w-4 h-4" />
+                </li>
+              </ul>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );
