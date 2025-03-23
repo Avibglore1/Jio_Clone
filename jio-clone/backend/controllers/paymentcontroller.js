@@ -27,21 +27,21 @@ export const getPaymentController = async (req, res) => {
 // updation of status of premium access
 export const updatePremiumAccessController = async (req, res) => {
     try {
-        const email = req.body.email;
-        const user = await User.findOne({ email: email });
-        if (!user) {
+        const { email } = req.body;
+
+        const updatedUser = await User.findOneAndUpdate(
+            { email },
+            { $set: { isPremium: true } },
+            { new: true } // Returns the updated document
+        );
+
+        if (!updatedUser) {
             return res.status(404).json({ error: "User not found" });
         }
-        user.premiumAccess = true;
-        //  find and update the user with the new premium access status
-        await User.findOneAndUpdate(
-            { email: email },
-            { $set: { isPremium: true } },
-            { new: true }
-        );
-        res.json({ message: { isPremium: true } });
+
+        res.json({ message: { isPremium: updatedUser.isPremium } });
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };

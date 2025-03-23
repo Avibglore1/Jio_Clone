@@ -12,7 +12,20 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   resetPasswordExpire: {type: Date},
-  otp: {type:String}
+  otp: {type:String},
+  createdAt: {
+    type: Date,
+    default: Date.now()
+},
+isPremium: {
+    type: Boolean,
+    default: false
+},
+role: {
+    type: String,
+
+    default: "user"
+}
 });
 
 
