@@ -110,7 +110,11 @@ export const login = async (req, res) => {
     sameSite: "strict",
   });
 
-  res.status(200).json({ message: "Login successful", token });
+  res.status(200).json({ 
+    message: "Login successful",
+    status: "success",
+    user: user, 
+    token });
 };
 
 export const protectRouteMiddleWare = async function (req, res, next) {

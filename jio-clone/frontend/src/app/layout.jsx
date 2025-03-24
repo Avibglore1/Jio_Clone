@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
 import { Inter } from "next/font/google";
+import StoreProvider from "@/providers/storeProviders";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -15,11 +16,14 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         className={`${inter.className} antialiased`}
-      >
-         <Header></Header>
+      >   
+      <StoreProvider>
+        <Header></Header>
          <Toaster position="top-center" reverseOrder={false} />
         {children}
         <Footer/>
+      </StoreProvider> 
+         
       </body>
     </html>
   );

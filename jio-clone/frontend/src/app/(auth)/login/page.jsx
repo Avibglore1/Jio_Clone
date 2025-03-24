@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useDispatch, useSelector } from "react-redux";
+import { userLoggedInDetails } from "@/redux/userSlice";
 
 dotenv.config();
 
@@ -13,14 +15,19 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const router = useRouter();
-
+  const dispatch = useDispatch();
+  const userData = useSelector((state) => state.user);
+  if (userData.isLoggedIn) {
+    return router.push("/");
+}
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, form, { withCredentials: true });
       console.log("frontend response received");
       localStorage.setItem("token", res.data.token);
-      router.push("/dashboard");
+      dispatch(userLoggedInDetails(res.data.user));
+      router.push("/");
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || "Invalid credentials");
