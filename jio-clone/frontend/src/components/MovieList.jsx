@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { fetchMovies, fetchMoviesByGenre, fetchTvShows, fetchTvShowsByGenre } from "../lib/api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -11,6 +12,7 @@ const MovieList = ({ category, genreId, title, contentType = "movie" }) => {
   const autoScrollRef = useRef(null);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,6 +78,20 @@ const MovieList = ({ category, genreId, title, contentType = "movie" }) => {
     e.target.onerror = null; // Prevent infinite callbacks
   };
 
+  // Handle item click to navigate to watch page
+  const handleItemClick = (id) => {
+    // Pause auto-scrolling
+    setIsUserScrolling(true);
+    clearInterval(autoScrollRef.current);
+    
+    // Route to different paths based on content type
+    if (contentType === "tv") {
+      router.push(`/tv-shows/watch?id=${id}`);
+    } else {
+      router.push(`/movies/watch?id=${id}`);
+    }
+  };
+
   return (
     <div className="relative px-6 py-4">
       <h2 className="text-2xl font-bold text-white mb-4">{title}</h2>
@@ -115,7 +131,11 @@ const MovieList = ({ category, genreId, title, contentType = "movie" }) => {
         onScroll={() => setIsUserScrolling(true)}
       >
         {filteredItems.map((item) => (
-          <div key={item.id} className="w-[14.2%] shrink-0">
+          <div 
+            key={item.id} 
+            className="w-[14.2%] shrink-0 cursor-pointer"
+            onClick={() => handleItemClick(item.id)}
+          >
             <div className="relative pb-[150%]"> {/* Aspect ratio container */}
               <img
                 src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}

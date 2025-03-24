@@ -7,20 +7,24 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { userLoggedOutDetails } from '@/redux/userSlice';
+
 function Profile() {
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const userData = useSelector((state) => state.user);
     const router = useRouter();
-     // Handle login button click
-  const handleLogin = () => {
-    setOpen(false); // Close the sheet
-    if(userData.isLoggedIn){
-        router.push("/")
-    }else{
-        router.push("/login"); // Navigate to login
-    }
-    
-  };
+     
+     const handleAuthAction = () => {
+        setOpen(false); // Close the sheet
+        if (userData.isLoggedIn) {
+            dispatch(userLoggedOutDetails()); // Dispatch logout action
+            router.push("/"); // Redirect to home after logout
+        } else {
+            router.push("/login"); // Navigate to login
+        }
+    };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -37,7 +41,7 @@ function Profile() {
               <Image src="/user.jpg" alt="User" className="w-20 h-20 rounded-full" height={80} width={80} />
               <h3 className="mt-3 text-xl font-semibold">{userData.isLoggedIn ? userData.user.name : "Guest"}</h3>
               <Button className="mt-3 bg-pink-600 text-white px-6 rounded-full hover:bg-pink-500"
-                onClick={handleLogin}>
+                onClick={handleAuthAction}>
                 {userData.isLoggedIn ? "Logout" : "Login"}
               </Button>
             </div>
