@@ -117,27 +117,6 @@ export const login = async (req, res) => {
     token });
 };
 
-export const protectRouteMiddleWare = async function (req, res, next) {
-  try {
-      let jwttoken = req.cookies.jwt;
-      if (!jwttoken) throw new Error("UnAuthorized!");
-
-      let decryptedToken = await promisifiedJWTVerify(jwttoken, Jwt_Sec);
-
-      if (decryptedToken) {
-          let userId = decryptedToken.id;
-          // adding the userId to the req object
-          req.userId = userId;
-          console.log("authenticated");
-          next();
-      }
-  } catch (err) {
-      res.status(500).json({
-          message: err.message,
-          status: "failure",
-      });
-  }
-};
 
 export const logout = (req, res) => {
   res.cookie("authToken", "", {

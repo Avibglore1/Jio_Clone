@@ -6,7 +6,6 @@ const wishlistItemSchema = new mongoose.Schema({
   id: { type: String, required: true }
 });
 
-
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -16,17 +15,17 @@ const UserSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now()
-},
-isPremium: {
+  },
+  isPremium: {
     type: Boolean,
     default: false
-},
-role: {
+  },
+  role: {
     type: String,
-
     default: "user"
-}
+  },
+  // Add wishlist to the User model
+  wishlist: [wishlistItemSchema]
 });
-
 
 export default mongoose.model("User", UserSchema);

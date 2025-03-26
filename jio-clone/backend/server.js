@@ -2,9 +2,9 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js"; 
-import authRoutes from "./routes/authRoutes.js";
+import authRouter from "./routes/authRoutes.js";
 import PaymentRouter from "./routes/paymentRoutes.js";
-import UserRouter from "./routes/userRoutes.js";
+import wishlistRouter from "./routes/wishlistRoutes.js"
 import VideoRouter from "./routes/videoRoutes.js";
 
 dotenv.config();
@@ -26,8 +26,8 @@ app.use(express.json());
 connectDB();
 
 // Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/user", UserRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/user", wishlistRouter);
 app.use("/api/video", VideoRouter);
 app.use("/api/payment", PaymentRouter);
 

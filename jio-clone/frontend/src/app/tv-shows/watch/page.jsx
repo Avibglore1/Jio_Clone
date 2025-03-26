@@ -67,34 +67,107 @@ export default function TvShowWatchPage() {
     fetchVideo();
 
     // Check if TV show is already in watchlist
-    const watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
-    setIsInWatchlist(watchlist.some(item => item.id === parseInt(id)));
+    const checkWatchlist = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const res = await fetch("http://localhost:5000/api/user", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          const isInList = data.wishlist.some(item => item.id === id);
+          setIsInWatchlist(isInList);
+        }
+      } catch (error) {
+        console.error("Error checking watchlist:", error);
+      }
+    };
+
+    checkWatchlist();
   }, [id]);
 
-  const handleAddToWatchlist = () => {
-    // If not logged in, redirect to login
+  const handleAddToWatchlist = async () => {
     if (!isLoggedIn) {
-      router.push('/login');
+      router.push("/login");
       return;
     }
+  
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("User is not authenticated. Please log in.");
+      router.push("/login");
+      return;
+    }
+  
+    try {
+      const res = await fetch("http://localhost:5000/api/user/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id: parseInt(id),
+          poster_path: `https://image.tmdb.org/t/p/w500${searchParams.get("poster_path")}`,
+          name: title,
+        }),
+      });
+  
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Server Error: ${errorText}`);
+      }
+  
+      const data = await res.json();
+      
+      if (data.success) {
+        setIsInWatchlist(true);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Error adding to watchlist:", error);
+      alert("Failed to add to watchlist");
+    }
+  };
 
-    const watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
-    
-    if (!isInWatchlist) {
-      // Add to watchlist
-      const tvShowToAdd = { 
-        id: parseInt(id), 
-        title: title,
-        type: 'tv'
-      };
-      watchlist.push(tvShowToAdd);
-      localStorage.setItem('watchlist', JSON.stringify(watchlist));
-      setIsInWatchlist(true);
-    } else {
-      // Remove from watchlist
-      const updatedWatchlist = watchlist.filter(item => item.id !== parseInt(id));
-      localStorage.setItem('watchlist', JSON.stringify(updatedWatchlist));
-      setIsInWatchlist(false);
+  const handleRemoveFromWatchlist = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("User is not authenticated. Please log in.");
+      router.push("/login");
+      return;
+    }
+  
+    try {
+      const res = await fetch(`http://localhost:5000/api/user/remove/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+  
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Server Error: ${errorText}`);
+      }
+  
+      const data = await res.json();
+      
+      if (data.success) {
+        setIsInWatchlist(false);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Error removing from watchlist:", error);
+      alert("Failed to remove from watchlist");
     }
   };
 
@@ -137,7 +210,7 @@ export default function TvShowWatchPage() {
         {/* Add to Watchlist Button - Only show if logged in */}
         {isLoggedIn && (
           <button 
-            onClick={handleAddToWatchlist}
+            onClick={isInWatchlist ? handleRemoveFromWatchlist : handleAddToWatchlist}
             className="bg-pink-400 text-black px-4 py-2 rounded-full hover:bg-pink-500 transition"
           >
             {isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}

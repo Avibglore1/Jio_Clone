@@ -71,32 +71,50 @@ export default function MovieWatchPage() {
     setIsInWatchlist(watchlist.some(item => item.id === parseInt(id)));
   }, [id]);
 
-  const handleAddToWatchlist = () => {
-    // If not logged in, redirect to login
+  const handleAddToWatchlist = async () => {
     if (!isLoggedIn) {
-      router.push('/login');
+      router.push("/login");
       return;
     }
-
-    const watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
-    
-    if (!isInWatchlist) {
-      // Add to watchlist
-      const movieToAdd = { 
-        id: parseInt(id), 
-        title: title,
-        type: 'movie'
-      };
-      watchlist.push(movieToAdd);
-      localStorage.setItem('watchlist', JSON.stringify(watchlist));
-      setIsInWatchlist(true);
-    } else {
-      // Remove from watchlist
-      const updatedWatchlist = watchlist.filter(item => item.id !== parseInt(id));
-      localStorage.setItem('watchlist', JSON.stringify(updatedWatchlist));
-      setIsInWatchlist(false);
+  
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("User is not authenticated. Please log in.");
+      router.push("/login");
+      return;
+    }
+  
+    try {
+      const res = await fetch("http://localhost:5000/api/user/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Ensure token is sent
+        },
+        body: JSON.stringify({
+          id: parseInt(id),
+          poster_path: `https://image.tmdb.org/t/p/w500${searchParams.get("poster_path")}`,
+          name: title,
+        }),
+      });
+  
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Server Error: ${errorText}`);
+      }
+  
+      const data = await res.json();
+      
+      if (data.success) {
+        setIsInWatchlist(true);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Error adding to watchlist:", error);
     }
   };
+  
 
   if (loading) {
     return (
