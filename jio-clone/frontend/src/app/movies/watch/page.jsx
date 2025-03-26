@@ -3,14 +3,21 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 
 export default function MovieWatchPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const id = searchParams.get("id");
+  
+  const { isLoggedIn } = useSelector((state) => state.user);
+  
   const [videoKey, setVideoKey] = useState("");
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [isInWatchlist, setIsInWatchlist] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -58,7 +65,38 @@ export default function MovieWatchPage() {
     };
 
     fetchVideo();
+
+    // Check if movie is already in watchlist
+    const watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+    setIsInWatchlist(watchlist.some(item => item.id === parseInt(id)));
   }, [id]);
+
+  const handleAddToWatchlist = () => {
+    // If not logged in, redirect to login
+    if (!isLoggedIn) {
+      router.push('/login');
+      return;
+    }
+
+    const watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+    
+    if (!isInWatchlist) {
+      // Add to watchlist
+      const movieToAdd = { 
+        id: parseInt(id), 
+        title: title,
+        type: 'movie'
+      };
+      watchlist.push(movieToAdd);
+      localStorage.setItem('watchlist', JSON.stringify(watchlist));
+      setIsInWatchlist(true);
+    } else {
+      // Remove from watchlist
+      const updatedWatchlist = watchlist.filter(item => item.id !== parseInt(id));
+      localStorage.setItem('watchlist', JSON.stringify(updatedWatchlist));
+      setIsInWatchlist(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -85,9 +123,9 @@ export default function MovieWatchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Back button */}
-      <div className="p-4">
+    <div className="min-h-screen bg-black text-white relative">
+      {/* Back button and Add to Watchlist button */}
+      <div className="p-4 flex justify-between items-center">
         <Link 
           href="/movies" 
           className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition"
@@ -95,6 +133,16 @@ export default function MovieWatchPage() {
           <ArrowLeft size={16} />
           Back to Movies
         </Link>
+
+        {/* Add to Watchlist Button - Only show if logged in */}
+        {isLoggedIn && (
+          <button 
+            onClick={handleAddToWatchlist}
+            className="bg-pink-400 text-black px-4 py-2 rounded-full hover:bg-pink-500 transition"
+          >
+            {isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
+          </button>
+        )}
       </div>
       
       <div className="container mx-auto px-4 pb-10">
