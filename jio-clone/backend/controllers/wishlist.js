@@ -50,7 +50,10 @@ export const removeFromWishlist = async (req, res) => {
     
     const user = await User.findById(req.user.id);
     
-    user.wishlist = user.wishlist.filter(item => item.id !== id);
+    // Convert id to number for strict comparison
+    const movieId = parseInt(id);
+    
+    user.wishlist = user.wishlist.filter(item => item.id !== movieId);
     
     await user.save();
 

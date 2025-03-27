@@ -56,17 +56,22 @@ export default function WatchlistPage() {
     try {
       const token = localStorage.getItem('token');
       
-      await axios.delete(`http://localhost:5000/api/user/remove/${itemId}`, {
+      const response = await axios.delete(`http://localhost:5000/api/user/remove/${itemId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-
-      setWishlist(prevWishlist => 
-        prevWishlist.filter(item => item.id !== itemId)
-      );
+  
+      if (response.data.success) {
+        // Update local state with the returned wishlist from server
+        setWishlist(response.data.wishlist);
+      } else {
+        console.error('Server failed to remove item');
+        alert('Failed to remove item from wishlist');
+      }
     } catch (err) {
       console.error('Failed to remove item from wishlist:', err);
+      alert('Error removing item from wishlist');
     }
   };
 
@@ -111,18 +116,24 @@ export default function WatchlistPage() {
               className="flex justify-between items-center p-4 border rounded"
             >
               <div className="flex items-center">
-                <img 
-                  src={item.poster_path} 
-                  alt={item.name} 
-                  className="w-16 h-24 object-cover mr-4"
-                />
+                {item.poster_path ? (
+                  <img 
+                    src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} 
+                    alt={item.name} 
+                    className="w-16 h-24 object-cover mr-4"
+                  />
+                ) : (
+                  <div className="w-16 h-24 bg-gray-200 mr-4 flex items-center justify-center">
+                    <span className="text-gray-500 text-xs">No Image</span>
+                  </div>
+                )}
                 <div>
                   <h3 className="font-semibold">{item.name}</h3>
                 </div>
               </div>
               <button
                 onClick={() => removeFromWishlist(item.id)}
-                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                className="px-3 py-1 bg-pink-500 text-white rounded hover:bg-pink-600"
               >
                 Remove
               </button>
