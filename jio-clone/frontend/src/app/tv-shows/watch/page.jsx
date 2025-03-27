@@ -1,12 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Star, Clock, Bookmark } from "lucide-react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 
-export default function TvShowWatchPage() {
+function TvShowWatchPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const id = searchParams.get("id");
@@ -290,5 +290,17 @@ export default function TvShowWatchPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function TvShowWatchPage() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen bg-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-pink-600"></div>
+      </div>
+    }>
+      <TvShowWatchPageContent />
+    </Suspense>
   );
 }

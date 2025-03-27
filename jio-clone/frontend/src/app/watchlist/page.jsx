@@ -82,7 +82,7 @@ export default function WatchlistPage() {
         <h2 className="text-xl mb-4">Login to see your wishlist</h2>
         <button 
           onClick={handleLogin}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600"
         >
           Login
         </button>
