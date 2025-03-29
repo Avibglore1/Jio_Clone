@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import HeroHome from "./../components/Banner/HeroHome"
+import HeroHome from "../components/Banner/HeroHome"
 import MovieList from "@/components/MovieList";
 import HomeBadge from "@/components/Badge/HomeBadge";
 import { ArrowUp } from "lucide-react";
